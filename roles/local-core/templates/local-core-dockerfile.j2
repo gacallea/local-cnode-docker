@@ -1,0 +1,113 @@
+# {{ ansible_managed }}
+
+### CARDANO NODE BUILDER CONTAINER ###
+FROM ubuntu:20.04 AS cardano-builder
+
+# Change the Cardano Node version and git tag, and Cabal and GHC versions, here
+ENV CABAL_VERSION="{{ cabal_version | string }}" \
+    GHC_VERSION="{{ ghc_version | string }}" \
+    CARDANO_NODE_VERSION="{{ cardano_node_version | string }}" \
+    CARDANO_NODE_GIT_TAG="{{ cardano_node_git_tag | string }}" \
+    PATH="/opt/ghc/bin:/opt/cabal/bin:${PATH}" \
+    LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH" \
+    PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH"
+
+# Install the packages needed to compile cardano node software
+# GHC and Cabal from the official PPA - https://launchpad.net/~hvr/+archive/ubuntu/ghc
+RUN apt-get update -y && \
+    apt-get install -y software-properties-common && \
+    add-apt-repository ppa:hvr/ghc && \
+    apt-get update -y && \
+    apt-get install -y \
+    automake build-essential pkg-config libffi-dev libgmp-dev libssl-dev libtinfo-dev \
+    libsystemd-dev zlib1g-dev make g++ tmux git jq wget libncursesw5 libtool autoconf \
+    apt-utils cabal-install-${CABAL_VERSION} ghc-${GHC_VERSION} && \
+    cabal update
+
+# Clone + build libsodium
+WORKDIR /usr/local/src/
+RUN git clone https://github.com/input-output-hk/libsodium
+WORKDIR /usr/local/src/libsodium
+RUN git checkout 66f017f1 && \
+    ./autogen.sh && \
+    ./configure && \
+    make && \
+    make install
+
+# Clone + build cardano-node
+WORKDIR /usr/local/src/
+RUN git clone https://github.com/input-output-hk/cardano-node
+WORKDIR /usr/local/src/cardano-node/
+RUN git fetch --all --recurse-submodules --tags && \
+    git checkout tags/${CARDANO_NODE_GIT_TAG} && \
+    echo "package cardano-crypto-praos" >> cabal.project.local && \
+    echo "flags: -external-libsodium-vrf" >> cabal.project.local && \
+    cabal build all --minimize-conflict-set
+
+WORKDIR /usr/local/src/cardano-node/dist-newstyle/build/x86_64-linux/ghc-${GHC_VERSION}/
+RUN cp -f \
+    ./cardano-node-${CARDANO_NODE_VERSION}/x/cardano-node/build/cardano-node/cardano-node \
+    ./cardano-cli-${CARDANO_NODE_VERSION}/x/cardano-cli/build/cardano-cli/cardano-cli \
+    /usr/local/bin/
+
+### CARDANO NODE IMAGE ###
+FROM ubuntu:20.04 AS cardano-node
+
+# this is needed to avoid TIMEZONE interactive setup (set your time zone TIMEZONE in the docker-compose.yaml)
+ENV DEBIAN_FRONTEND=noninteractive
+RUN ln -snf /usr/share/zoneinfo/$TIMEZONE /etc/localtime && \
+    echo $TIMEZONE > /etc/timezone && \
+    # Install some useful software (to be decided...)
+    apt-get update -y && \
+    apt-get install -y bc chrony curl dnsutils jq iputils-ping \
+    net-tools ripgrep sysstat tcptraceroute tree vim wget \
+    apt-utils man manpages git rsync
+
+# Copy the compiled cardano node software from the builder to the node
+COPY --from=cardano-builder /usr/local/bin/ /usr/local/bin/
+# Copy the compiled cardano node software from the builder to the node
+COPY --from=cardano-builder /usr/local/lib/ /usr/local/lib/
+
+# Copy some customized config files
+COPY etc/inputrc /etc/inputrc
+COPY etc/libsodium.conf /etc/ld.so.conf.d/libsodium.conf
+RUN ldconfig
+
+# Create the user and group to run the cardano-node
+RUN groupadd {{ cardano_node_user }} && \
+    useradd -c "Cardano node user" -m -d {{ cardano_node_user_home }} -s /sbin/nologin -g {{ cardano_node_user }} {{ cardano_node_user }}
+
+# Copy the entrypoint scripts
+COPY usr/local/lib/ /usr/local/lib/
+COPY usr/local/bin/ /usr/local/bin/
+
+RUN curl -sLJ https://github.com/input-output-hk/jormungandr/releases/download/v{{ jormungandr_version }}/jormungandr-{{ jormungandr_version }}-x86_64-unknown-linux-gnu-generic.tar.gz -o /tmp/jormungandr-{{ jormungandr_version }}-x86_64-unknown-linux-gnu-generic.tar.gz
+RUN tar -xzf /tmp/jormungandr-{{ jormungandr_version }}-x86_64-unknown-linux-gnu-generic.tar.gz -C /usr/local/bin/
+RUN rm -rf /tmp/jormungandr-{{ jormungandr_version }}-x86_64-unknown-linux-gnu-generic.tar.gz
+
+# Switch user to run your app as USER for better security
+# see this for great security tips https://github.com/BretFisher/ama/issues/17
+USER {{ cardano_node_user }}
+ENV HOME={{ cardano_node_user_home }}
+
+# Create the needed directories to run the cardano-node
+RUN bash -c 'mkdir $HOME/{config,db,keys,socket,scripts}/'
+
+RUN git clone https://github.com/gitmachtl/scripts.git $HOME/scripts/scripts && \
+    rsync -arsu $HOME/scripts/scripts/cardano/mainnet/ $HOME/scripts/ && \
+    rm -rf $HOME/scripts/scripts/
+
+COPY --chown={{ cardano_node_user }}:{{ cardano_node_user }} config/.bashrc $HOME/
+COPY --chown={{ cardano_node_user }}:{{ cardano_node_user }} config/.common.inc $HOME/
+COPY --chown={{ cardano_node_user }}:{{ cardano_node_user }} config/*.json $HOME/config/
+COPY --chown={{ cardano_node_user }}:{{ cardano_node_user }} scripts/99_isLeader.sh $HOME/scripts/
+COPY --chown={{ cardano_node_user }}:{{ cardano_node_user }} scripts/getSigma.py $HOME/scripts/
+COPY --chown={{ cardano_node_user }}:{{ cardano_node_user }} scripts/leaderLogs.py $HOME/scripts/
+
+# Some ENV needed to be set for some cardano-cli commands to work
+ENV CARDANO_NODE_DB_PATH=$HOME/db/ \
+    CARDANO_NODE_SOCKET_PATH=$HOME/socket/node.socket
+
+WORKDIR {{ cardano_node_user_home }}
+
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

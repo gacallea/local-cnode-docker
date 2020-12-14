@@ -1,0 +1,20 @@
+---
+# SET YOUR POOL TICKER AND ID HERE
+pool_ticker: SALAD
+pool_id: e29b14719f694767d0faf92f654cf66585bcefd8139bf5a33b7ed181
+# DEFINE THE MOUNT POINT TO YOUR SECRET KEYS AND ADDRESSES HERE
+secret_path: "/Volumes/DATASHUR\ P2/CardanoPoolFiles/_SHELLEY/backups_DoNOT_Delete/thisIsMainnetOffline"
+
+## DO NOT EDIT PAST THIS POINT ## DO NOT EDIT PAST THIS POINT ## DO NOT EDIT PAST THIS POINT
+core_nodes_port: 3000
+cardano_node_user: cnode
+cardano_node_user_home: /home/cardano-node
+cardano_prefix: mainnet
+files_path: roles/local-core/files
+
+## TO GET A NEW VERSION, PULL FROM MY REPO WHEN TOLD TO DO SO
+cabal_version: 3.4
+ghc_version: 8.10.2
+cardano_node_version: 1.24.2
+cardano_node_git_tag: 1.24.2
+jormungandr_version: 0.9.3

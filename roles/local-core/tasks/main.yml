@@ -1,0 +1,80 @@
+---
+# tasks file for local-core
+- name: Create Docker + compose files
+  template:
+    src: "{{ item.key }}"
+    dest: "{{ item.value.dest }}"
+    mode: "{{ item.value.mode }}"
+  with_dict:
+    local-core-dockerfile.j2:
+      dest: docker/local-core/Dockerfile
+      mode: "0644"
+    local-core-compose.j2:
+      dest: docker/local-core/docker-compose.yml
+      mode: "0644"
+
+- name: Copy templated files
+  template:
+    src: "{{ item.key }}"
+    dest: "{{ item.value.dest }}"
+    mode: "{{ item.value.mode }}"
+  with_dict:
+    scripts-common.inc.j2:
+      dest: "docker/local-core/config/.common.inc"
+      mode: "0400"
+    setup-libsodium.conf.j2:
+      dest: "docker/local-core/etc/libsodium.conf"
+      mode: "0644"
+    setup-inputrc.j2:
+      dest: "docker/local-core/etc/inputrc"
+      mode: "0644"
+    setup-bashrc.j2:
+      dest: "docker/local-core/config/.bashrc"
+      mode: "0644"
+
+- name: Fetch the latest Cardano files to Commons
+  script: scripts/99_get_files.sh {{ cardano_prefix }} {{ files_path }}/build_files {{ files_path }}/commons/
+  register: result
+
+- name: Fetch Script Output
+  debug:
+    msg: "{{ result.stdout_lines }}"
+
+- name: Copying Default Config Files and Topology
+  copy:
+    src: "commons/{{ item }}"
+    dest: "docker/local-core/config/{{ item }}"
+    mode: "0644"
+  with_items:
+    - mainnet-config.json
+    - mainnet-byron-genesis.json
+    - mainnet-shelley-genesis.json
+    - mainnet-topology.json
+
+- name: Copying External Scripts
+  copy:
+    src: "scripts/{{ item }}"
+    dest: "docker/local-core/scripts/{{ item }}"
+    mode: "0755"
+  with_items:
+    - 99_isLeader.sh
+    - getSigma.py
+    - leaderLogs.py
+
+- name: Docker Compose Build Local Core
+  docker_compose:
+    project_src: docker/local-core/
+    project_name: local
+    files:
+      - "docker-compose.yml"
+    build: yes
+    state: present
+  register: result
+
+- name: Docker Compose Compile Result
+  debug:
+    msg: "Docker container successfully built: {{ result.services.builder.local_builder_1.image }}"
+
+- name: Docker Compose Compile Result
+  debug:
+    msg: "Docker container successfully built: {{ result.services.core.local_core_1.image }}"

@@ -1,0 +1,40 @@
+# {{ ansible_managed }}
+
+version: "3.8"
+
+services:
+  builder:
+    image: cardano-builder:{{ cardano_node_version }}
+    build:
+      context: .
+      target: cardano-builder
+  core:
+    image: cardano-node:{{ cardano_node_version }}
+    build:
+      context: .
+      target: cardano-node
+    environment:
+      CARDANO_NODE_PORT: {{ core_nodes_port | string }}
+      TIMEZONE: UTC
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -s http://localhost:12798/metrics >/dev/null || exit 1",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    volumes:
+      - core_db:{{ cardano_node_user_home }}/db
+      - core_data:{{ cardano_node_user_home }}/data
+
+volumes:
+  core_db: {}
+  core_data:
+    driver: local
+    driver_opts:
+      device: "{{ secret_path | string }}"
+      o: bind
+      type: none

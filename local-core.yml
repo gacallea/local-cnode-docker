@@ -1,0 +1,5 @@
+---
+- name: CREATE LOCAL NODE
+  hosts: localhost
+  roles:
+    - local-core
