@@ -29,7 +29,7 @@ ledger = args.ledger
 if not path.exists(ledger):
     print("We tried but could not locate your ledger-state JSON file!")
     print(
-        "Use: \033[1;34mcardano-cli shelley query ledger-state --mainnet --out-file ledger.json\033[0m to export one!"
+        "Use: \033[1;34mcardano-cli query ledger-state --mainnet --out-file ledger.json\033[0m to export one!"
     )
     exit()
 
