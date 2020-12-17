@@ -57,6 +57,8 @@
     dest: "docker/local-core/scripts/{{ item }}"
     mode: "0755"
   with_items:
+    - 0x_genPledgeAccount.sh
+    - 01_sendMeta.sh
     - 99_isLeader.sh
     - getSigma.py
     - leaderLogs.py
