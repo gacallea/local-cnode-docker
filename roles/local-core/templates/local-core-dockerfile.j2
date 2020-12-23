@@ -59,9 +59,7 @@ RUN ln -snf /usr/share/zoneinfo/$TIMEZONE /etc/localtime && \
     echo $TIMEZONE > /etc/timezone && \
     # Install some useful software (to be decided...)
     apt-get update -y && \
-    apt-get install -y bc chrony curl dnsutils jq iputils-ping \
-    net-tools ripgrep sysstat tcptraceroute tree vim wget \
-    apt-utils man manpages git rsync
+    apt-get install -y bc chrony curl jq iputils-ping tree apt-utils git rsync
 
 # Copy the compiled cardano node software from the builder to the node
 COPY --from=cardano-builder /usr/local/bin/ /usr/local/bin/
