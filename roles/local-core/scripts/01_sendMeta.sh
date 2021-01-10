@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Script is brought to you by ATADA_Stakepool, Telegram @atada_stakepool in
 # cooperation with @TheRealAdamDean (BUFFY & SPIKE)

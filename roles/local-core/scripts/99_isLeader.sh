@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 poolId="$1"
 epoch="$2"
