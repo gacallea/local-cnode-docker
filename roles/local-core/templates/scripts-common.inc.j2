@@ -3,8 +3,8 @@
 # {{ ansible_managed }}
 
 # Please set the following variables to your needs, you can overwrite them dynamically
-# by placing a file with name "common.inc" in the calling directory. It will be sourced
-# into this file automatically if present
+# by placing a file with name "common.inc" in the calling directory or in "$HOME/.common.inc".
+# It will be sourced into this file automatically if present and can overwrite the values below dynamically :-)
 
 socket="{{cardano_node_user_home}}/socket/node.socket" #Socket path
 genesisfile="{{cardano_node_user_home}}/config/{{cardano_prefix}}-shelley-genesis.json" #Shelley-Genesis path
@@ -17,10 +17,24 @@ itn_jcli=$(command -v jcli) #only needed if you wanna include your itn witness f
 magicparam="--mainnet"	#choose "--mainnet" for mainnet or for example "--testnet-magic 42" for a testnet
 addrformat="--mainnet"  #choose "--mainnet" for mainnet address format or like "--testnet-magic 42" for testnet address format
 
-{# #--------- only for kes/opcert update and upload via scp -----
+#--------- NEW --- you can now use a hardware key (Ledger/Trezor) too, please read the instructions on the github repo README :-)
+cardanohwcli="cardano-hw-cli"      #Path to your cardano-hw-cli you wanna use
 
-remoteServerAddr="remoteserver address or ip"                       #RemoteServer ip or dns name
-remoteServerUser="remoteuser"                             #RemoteServer userlogin via ssh keys
-remoteServerSSHport="22"                                #RemoteServer SSH port number
-remoteServerDestDir="~/remoteuser/core-###NODENAME###/."           #Destination directory were to copy the files to
-remoteServerPostCommand="~/remoteuser/restartCore.sh"      #Command to execute via SSH after the file upload completed to restart the coreNode on the remoteServer #}
+#--------- NEW --- you can work in offline mode now too, please read the instructions on the github repo README :-)
+offlineMode="no"                #change this to "yes" if you run theses scripts on a cold machine, it need a counterpart with set to "no" on a hot machine
+offlineFile="./offlineTransfer.json" #path to the filename (JSON) that will be used to transfer the data between a hot and a cold machine
+
+#--------- leave this next value until you have to change it for a testnet
+byronToShelleyEpochs=208 #208 for the mainnet, 74 for the testnet, 1 for allegra-testnet
+
+#--------- only for kes/opcert update and upload via scp -----
+remoteServerAddr="remoteserver address or ip"                   #RemoteServer ip or dns name
+remoteServerUser="remoteuser"                                   #RemoteServer userlogin via ssh keys
+remoteServerSSHport="22"                                        #RemoteServer SSH port number
+remoteServerDestDir="~/remoteuser/core-###NODENAME###/."        #Destination directory were to copy the files to
+remoteServerPostCommand="~/remoteuser/restartCore.sh"           #Command to execute via SSH after the file upload completed to restart the coreNode on the remoteServer
+
+
+#--------- some other stuff -----
+showVersionInfo="yes"   #yes/no to show the version info and script mode on every script call
+
