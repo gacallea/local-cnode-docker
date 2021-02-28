@@ -33,7 +33,7 @@
       mode: "0644"
 
 - name: Fetch the latest Cardano files to Commons
-  script: scripts/99_get_files.sh {{ cardano_prefix }} {{ files_path }}/build_files {{ files_path }}/commons/
+  script: scripts/get_files.sh {{ cardano_prefix }} {{ files_path }}/build_files {{ files_path }}/commons/
   register: result
 
 - name: Fetch Script Output
@@ -59,8 +59,6 @@
   with_items:
     - 0x_genPledgeAccount.sh
     - 01_sendMeta.sh
-    - 99_isLeader.sh
-    - leaderLogs.py
 
 - name: Docker Compose Build Local Core
   docker_compose:
