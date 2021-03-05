@@ -14,8 +14,8 @@ cardanocli=$(command -v cardano-cli) #Path to your cardano-cli you wanna use
 cardanonode=$(command -v cardano-node) #Path to your cardano-node you wanna use
 itn_jcli=$(command -v jcli) #only needed if you wanna include your itn witness for your pool-ticker
 
-magicparam="--mainnet"	#choose "--mainnet" for mainnet or for example "--testnet-magic 42" for a testnet
-addrformat="--mainnet"  #choose "--mainnet" for mainnet address format or like "--testnet-magic 42" for testnet address format
+magicparam="--mainnet"	#choose "--mainnet" for mainnet or for example "--testnet-magic 1097911063" for a testnet, 12 for allegra
+addrformat="--mainnet"  #choose "--mainnet" for mainnet address format or like "--testnet-magic 1097911063" for testnet address format, 12 for allegra
 
 #--------- NEW --- you can now use a hardware key (Ledger/Trezor) too, please read the instructions on the github repo README :-)
 cardanohwcli="cardano-hw-cli"      #Path to your cardano-hw-cli you wanna use
