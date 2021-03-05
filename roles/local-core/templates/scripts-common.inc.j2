@@ -12,16 +12,14 @@ genesisfile_byron="{{cardano_node_user_home}}/config/{{cardano_prefix}}-byron-ge
 
 cardanocli=$(command -v cardano-cli) #Path to your cardano-cli you wanna use
 cardanonode=$(command -v cardano-node) #Path to your cardano-node you wanna use
+cardanohwcli=$(command -v cardano-hw-cli) #Path to your cardano-hw-cli you wanna use
 itn_jcli=$(command -v jcli) #only needed if you wanna include your itn witness for your pool-ticker
 
 magicparam="--mainnet"	#choose "--mainnet" for mainnet or for example "--testnet-magic 1097911063" for a testnet, 12 for allegra
 addrformat="--mainnet"  #choose "--mainnet" for mainnet address format or like "--testnet-magic 1097911063" for testnet address format, 12 for allegra
 
-#--------- NEW --- you can now use a hardware key (Ledger/Trezor) too, please read the instructions on the github repo README :-)
-cardanohwcli="cardano-hw-cli"      #Path to your cardano-hw-cli you wanna use
-
 #--------- NEW --- you can work in offline mode now too, please read the instructions on the github repo README :-)
-offlineMode="no"                #change this to "yes" if you run theses scripts on a cold machine, it need a counterpart with set to "no" on a hot machine
+offlineMode="no" #change this to "yes" if you run theses scripts on a cold machine, it need a counterpart with set to "no" on a hot machine
 offlineFile="./offlineTransfer.json" #path to the filename (JSON) that will be used to transfer the data between a hot and a cold machine
 
 #--------- leave this next value until you have to change it for a testnet
@@ -37,4 +35,3 @@ remoteServerPostCommand="~/remoteuser/restartCore.sh"           #Command to exec
 
 #--------- some other stuff -----
 showVersionInfo="yes"   #yes/no to show the version info and script mode on every script call
-
