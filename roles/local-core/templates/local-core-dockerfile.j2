@@ -100,9 +100,6 @@ COPY --chown={{ cardano_node_user }}:{{ cardano_node_user }} config/.common.inc 
 COPY --chown={{ cardano_node_user }}:{{ cardano_node_user }} config/*.json $HOME/config/
 COPY --chown={{ cardano_node_user }}:{{ cardano_node_user }} scripts/0x_genPledgeAccount.sh $HOME/scripts/
 COPY --chown={{ cardano_node_user }}:{{ cardano_node_user }} scripts/01_sendMeta.sh $HOME/scripts/
-COPY --chown={{ cardano_node_user }}:{{ cardano_node_user }} scripts/99_isLeader.sh $HOME/scripts/
-COPY --chown={{ cardano_node_user }}:{{ cardano_node_user }} scripts/getSigma.py $HOME/scripts/
-COPY --chown={{ cardano_node_user }}:{{ cardano_node_user }} scripts/leaderLogs.py $HOME/scripts/
 
 # Some ENV needed to be set for some cardano-cli commands to work
 ENV CARDANO_NODE_DB_PATH=$HOME/db/ \
