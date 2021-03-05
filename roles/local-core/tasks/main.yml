@@ -58,7 +58,6 @@
     mode: "0755"
   with_items:
     - 0x_genPledgeAccount.sh
-    - 01_sendMeta.sh
 
 - name: Docker Compose Build Local Core
   docker_compose:
