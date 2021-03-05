@@ -99,7 +99,6 @@ COPY --chown={{ cardano_node_user }}:{{ cardano_node_user }} config/.bashrc $HOM
 COPY --chown={{ cardano_node_user }}:{{ cardano_node_user }} config/.common.inc $HOME/
 COPY --chown={{ cardano_node_user }}:{{ cardano_node_user }} config/*.json $HOME/config/
 COPY --chown={{ cardano_node_user }}:{{ cardano_node_user }} scripts/0x_genPledgeAccount.sh $HOME/scripts/
-COPY --chown={{ cardano_node_user }}:{{ cardano_node_user }} scripts/01_sendMeta.sh $HOME/scripts/
 
 # Some ENV needed to be set for some cardano-cli commands to work
 ENV CARDANO_NODE_DB_PATH=$HOME/db/ \
