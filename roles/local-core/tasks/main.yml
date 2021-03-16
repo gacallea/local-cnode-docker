@@ -62,7 +62,7 @@
 - name: Docker Compose Build Local Core
   docker_compose:
     project_src: docker/local-core/
-    project_name: local
+    project_name: build
     files:
       - "docker-compose.yml"
     build: yes
