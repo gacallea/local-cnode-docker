@@ -71,8 +71,8 @@
 
 - name: Docker Compose Compile Result
   debug:
-    msg: "Docker container successfully built: {{ result.services.builder.local_builder_1.image }}"
+    msg: "Docker container successfully built: {{ result.services.builder.build_builder_1.image }}"
 
 - name: Docker Compose Compile Result
   debug:
-    msg: "Docker container successfully built: {{ result.services.core.local_core_1.image }}"
+    msg: "Docker container successfully built: {{ result.services.core.build_core_1.image }}"
