@@ -79,6 +79,9 @@ RUN groupadd {{ cardano_node_user }} && \
 COPY usr/local/lib/ /usr/local/lib/
 COPY usr/local/bin/ /usr/local/bin/
 
+# Copy downloaded binaries
+COPY bins/ /usr/local/bin/
+
 RUN curl -sLJ https://github.com/input-output-hk/jormungandr/releases/download/v{{ jormungandr_version }}/jormungandr-{{ jormungandr_version }}-x86_64-unknown-linux-gnu-generic.tar.gz -o /tmp/jormungandr-{{ jormungandr_version }}-x86_64-unknown-linux-gnu-generic.tar.gz
 RUN tar -xzf /tmp/jormungandr-{{ jormungandr_version }}-x86_64-unknown-linux-gnu-generic.tar.gz -C /usr/local/bin/
 RUN rm -rf /tmp/jormungandr-{{ jormungandr_version }}-x86_64-unknown-linux-gnu-generic.tar.gz

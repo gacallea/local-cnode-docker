@@ -59,6 +59,22 @@
   with_items:
     - 0x_genPledgeAccount.sh
 
+- name: Fetch the latest Cardano Metadata Submitter
+  script: scripts/get_meta_sub.sh {{ files_path }}/bins
+  register: meta_result
+
+- name: Fetch Script Output
+  debug:
+    msg: "{{ meta_result.stdout_lines }}"
+
+- name: Copy Cardano Metadata Submitter Bin
+  copy:
+    src: "bins/{{ item }}"
+    dest: "docker/local-core/bins/{{ item }}"
+    mode: "0755"
+  with_items:
+    - cardano-metadata-submitter
+
 - name: Docker Compose Build Local Core
   docker_compose:
     project_src: docker/local-core/
