@@ -6,14 +6,16 @@
 # by placing a file with name "common.inc" in the calling directory or in "$HOME/.common.inc".
 # It will be sourced into this file automatically if present and can overwrite the values below dynamically :-)
 
-socket="{{cardano_node_user_home}}/socket/node.socket" #Socket path
-genesisfile="{{cardano_node_user_home}}/config/{{cardano_prefix}}-shelley-genesis.json" #Shelley-Genesis path
-genesisfile_byron="{{cardano_node_user_home}}/config/{{cardano_prefix}}-byron-genesis.json" #Byron-Genesis path
+socket="/home/cardano-node/socket/node.socket" #Socket path
+genesisfile="/home/cardano-node/config/mainnet-shelley-genesis.json" #Shelley-Genesis path
+genesisfile_byron="/home/cardano-node/config/mainnet-byron-genesis.json" #Byron-Genesis path
 
 cardanocli=$(command -v cardano-cli) #Path to your cardano-cli you wanna use
 cardanonode=$(command -v cardano-node) #Path to your cardano-node you wanna use
 cardanohwcli=$(command -v cardano-hw-cli) #Path to your cardano-hw-cli you wanna use
+cardanometa=$(command  -v cardano-metadata-submitter) #Path to your cardano-metadata-submitter binary you wanna use. If present in the Path just set it to "cardano-metadata-submitter" without the "./"
 itn_jcli=$(command -v jcli) #only needed if you wanna include your itn witness for your pool-ticker
+bech32_bin="./bech32"		#Path to your bech32 binary you wanna use. If your binary is present in the Path just set it to "bech32" without the "./"
 
 magicparam="--mainnet"	#choose "--mainnet" for mainnet or for example "--testnet-magic 1097911063" for a testnet, 12 for allegra
 addrformat="--mainnet"  #choose "--mainnet" for mainnet address format or like "--testnet-magic 1097911063" for testnet address format, 12 for allegra
@@ -32,6 +34,6 @@ remoteServerSSHport="22"                                        #RemoteServer SS
 remoteServerDestDir="~/remoteuser/core-###NODENAME###/."        #Destination directory were to copy the files to
 remoteServerPostCommand="~/remoteuser/restartCore.sh"           #Command to execute via SSH after the file upload completed to restart the coreNode on the remoteServer
 
-
 #--------- some other stuff -----
-showVersionInfo="yes"   #yes/no to show the version info and script mode on every script call
+showVersionInfo="yes"		#yes/no to show the version info and script mode on every script call
+queryTokenRegistry="yes"	#yes/no to query each native asset/token on the token registry server live
