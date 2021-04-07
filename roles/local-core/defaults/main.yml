@@ -10,7 +10,7 @@ files_path: roles/local-core/files
 ## TO GET A NEW VERSION, PULL FROM MY REPO WHEN TOLD TO DO SO
 cabal_version: 3.4
 ghc_version: 8.10.2
-cardano_node_version: 1.25.1
-cardano_node_git_tag: 1.25.1
+cardano_node_version: 1.26.1
+cardano_node_git_tag: 1.26.1
 jormungandr_version: 0.9.3
 hw_cli_version: 1.2.0
