@@ -49,6 +49,7 @@
     - mainnet-config.json
     - mainnet-byron-genesis.json
     - mainnet-shelley-genesis.json
+    - mainnet-alonzo-genesis.json
     - mainnet-topology.json
 
 - name: Copying External Scripts
