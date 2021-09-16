@@ -18,6 +18,10 @@ if [ -f "${CARDANO_NODE_USER_HOME}"/config/mainnet-shelley-genesis.json ]; then
   SHELLEY_GENESIS_FILE="${CARDANO_NODE_USER_HOME}"/config/mainnet-shelley-genesis.json
 fi
 
+if [ -f "${CARDANO_NODE_USER_HOME}"/config/mainnet-alonzo-genesis.json ]; then
+  ALONZO_GENESIS_FILE="${CARDANO_NODE_USER_HOME}"/config/mainnet-alonzo-genesis.json
+fi
+
 : "${CARDANO_NODE_PORT:=${CARDANO_NODE_PORT:-3000}}"
 : "${CARDANO_NODE_MAX_STARTUP_TIME:=${CARDANO_NODE_MAX_STARTUP_TIME:-20}}"
 : "${CARDANO_NODE_MAX_FAULT_UPTIME:=${CARDANO_NODE_MAX_FAULT_UPTIME:-600}}"

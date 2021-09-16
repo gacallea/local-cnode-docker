@@ -3,11 +3,6 @@
 version: "3.8"
 
 services:
-  builder:
-    image: cardano-builder:{{ cardano_node_version }}
-    build:
-      context: .
-      target: cardano-builder
   core:
     image: cardano-node:{{ cardano_node_version }}
     build:

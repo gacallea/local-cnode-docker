@@ -8,12 +8,16 @@ function preExitHook() {
   echo 'Exiting...'
 }
 
-if [[ ! -f "${SHELLEY_GENESIS_FILE}" ]]; then
+if [[ ! -f "${BYRON_GENESIS_FILE}" ]]; then
+  echo "'cardano-node' BYRON Genesis file does not exist! 'cardano-node' can NOT start!!!"
+  preExitHook "$@"
+  exit
+elif [[ ! -f "${SHELLEY_GENESIS_FILE}" ]]; then
   echo "'cardano-node' SHELLEY Genesis file does not exist! 'cardano-node' can NOT start!!!"
   preExitHook "$@"
   exit
-elif [[ ! -f "${BYRON_GENESIS_FILE}" ]]; then
-  echo "'cardano-node' BYRON Genesis file does not exist! 'cardano-node' can NOT start!!!"
+elif [[ ! -f "${ALONZO_GENESIS_FILE}" ]]; then
+  echo "'cardano-node' ALONZO Genesis file does not exist! 'cardano-node' can NOT start!!!"
   preExitHook "$@"
   exit
 elif [[ ! -f "${CARDANO_NODE_CONF_FILE}" ]]; then

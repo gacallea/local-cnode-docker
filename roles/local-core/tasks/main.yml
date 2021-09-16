@@ -1,6 +1,5 @@
 ---
-# tasks file for local-core
-- name: Create Docker + compose files
+- name: Create Docker + Compose files
   template:
     src: "{{ item.key }}"
     dest: "{{ item.value.dest }}"
@@ -13,6 +12,14 @@
       dest: docker/local-core/docker-compose.yml
       mode: "0644"
 
+- name: Fetch the latest Cardano binaries and configurations
+  script: scripts/get_files.sh {{ files_path }}/ {{ cardano_node_version }}
+  register: result
+
+- name: Fetch Script Output
+  debug:
+    msg: "{{ result.stdout_lines }}"
+
 - name: Copy templated files
   template:
     src: "{{ item.key }}"
@@ -22,9 +29,6 @@
     scripts-common.inc.j2:
       dest: "docker/local-core/config/.common.inc"
       mode: "0400"
-    setup-libsodium.conf.j2:
-      dest: "docker/local-core/etc/libsodium.conf"
-      mode: "0644"
     setup-inputrc.j2:
       dest: "docker/local-core/etc/inputrc"
       mode: "0644"
@@ -32,17 +36,18 @@
       dest: "docker/local-core/config/.bashrc"
       mode: "0644"
 
-- name: Fetch the latest Cardano files to Commons
-  script: scripts/get_files.sh {{ cardano_prefix }} {{ files_path }}/build_files {{ files_path }}/commons/
-  register: result
-
-- name: Fetch Script Output
-  debug:
-    msg: "{{ result.stdout_lines }}"
+- name: Copying Cardano Binaries
+  copy:
+    src: "{{ files_path }}/{{ item }}"
+    dest: "docker/local-core/bins/{{ item }}"
+    mode: "0755"
+  with_items:
+    - cardano-node
+    - cardano-cli
 
 - name: Copying Default Config Files and Topology
   copy:
-    src: "commons/{{ item }}"
+    src: "{{ files_path }}/configuration/cardano/{{ item }}"
     dest: "docker/local-core/config/{{ item }}"
     mode: "0644"
   with_items:
@@ -60,26 +65,10 @@
   with_items:
     - 0x_genPledgeAccount.sh
 
-- name: Fetch the latest Cardano Metadata Submitter
-  script: scripts/get_meta_sub.sh {{ files_path }}/bins
-  register: meta_result
-
-- name: Fetch Script Output
-  debug:
-    msg: "{{ meta_result.stdout_lines }}"
-
-- name: Copy Cardano Metadata Submitter Bin
-  copy:
-    src: "bins/{{ item }}"
-    dest: "docker/local-core/bins/{{ item }}"
-    mode: "0755"
-  with_items:
-    - cardano-metadata-submitter
-
 - name: Docker Compose Build Local Core
   docker_compose:
     project_src: docker/local-core/
-    project_name: build
+    project_name: local
     files:
       - "docker-compose.yml"
     build: yes
@@ -88,8 +77,4 @@
 
 - name: Docker Compose Compile Result
   debug:
-    msg: "Docker container successfully built: {{ result.services.builder.build_builder_1.image }}"
-
-- name: Docker Compose Compile Result
-  debug:
-    msg: "Docker container successfully built: {{ result.services.core.build_core_1.image }}"
+    msg: "Docker container successfully built: {{ result.services.core.local_core_1.image }}"
