@@ -7,7 +7,7 @@ cardano_node_user_home: /home/cardano-node
 files_path: roles/local-core/files
 
 ## TO GET A NEW VERSION, PULL FROM MY REPO WHEN TOLD TO DO SO
-cabal_version: 3.4
-ghc_version: 8.10.4
 cardano_node_version: 1.29.0
 cardano_node_git_tag: 1.29.0
+hw_cli_version: 1.6.2
+jormungandr_version: 0.11.2

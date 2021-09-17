@@ -14,16 +14,24 @@ RUN ln -snf /usr/share/zoneinfo/$TIMEZONE /etc/localtime && \
 # Copy some customized config files
 COPY etc/inputrc /etc/inputrc
 
-# Create the user and group to run the cardano-node
-RUN groupadd {{ cardano_node_user }} && \
-    useradd -c "Cardano node user" -m -d {{ cardano_node_user_home }} -s /sbin/nologin -g {{ cardano_node_user }} {{ cardano_node_user }}
-
 # Copy the entrypoint scripts
 COPY usr/local/lib/ /usr/local/lib/
 COPY usr/local/bin/ /usr/local/bin/
 
 # Copy downloaded binaries
 COPY bins/ /usr/local/bin/
+
+RUN curl -sLJ https://github.com/input-output-hk/jormungandr/releases/download/v{{ jormungandr_version }}/jormungandr-{{ jormungandr_version }}-x86_64-unknown-linux-gnu-generic.tar.gz -o /tmp/jormungandr-{{ jormungandr_version }}-x86_64-unknown-linux-gnu-generic.tar.gz
+RUN tar -xzf /tmp/jormungandr-{{ jormungandr_version }}-x86_64-unknown-linux-gnu-generic.tar.gz -C /usr/local/bin/
+RUN rm -rf /tmp/jormungandr-{{ jormungandr_version }}-x86_64-unknown-linux-gnu-generic.tar.gz
+
+RUN curl -sLJ https://github.com/vacuumlabs/cardano-hw-cli/releases/download/v{{ hw_cli_version }}/cardano-hw-cli_{{ hw_cli_version }}-1.deb -o /tmp/cardano-hw-cli_{{ hw_cli_version }}-1.deb
+RUN dpkg --install /tmp/cardano-hw-cli_{{ hw_cli_version }}-1.deb
+RUN rm -rf /tmp/cardano-hw-cli_{{ hw_cli_version }}-1.deb
+
+# Create the user and group to run the cardano-node
+RUN groupadd {{ cardano_node_user }} && \
+    useradd -c "Cardano node user" -m -d {{ cardano_node_user_home }} -s /sbin/nologin -g {{ cardano_node_user }} {{ cardano_node_user }}
 
 # Switch user to run your app as USER for better security
 # see this for great security tips https://github.com/BretFisher/ama/issues/17
