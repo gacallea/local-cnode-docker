@@ -2,20 +2,27 @@
 
 # {{ ansible_managed }}
 
+##############################################################################################################################
+#
+# MAIN CONFIG FILE:
+#
 # Please set the following variables to your needs, you can overwrite them dynamically
 # by placing a file with name "common.inc" in the calling directory or in "$HOME/.common.inc".
 # It will be sourced into this file automatically if present and can overwrite the values below dynamically :-)
+#
+##############################################################################################################################
 
 socket="/home/cardano-node/socket/node.socket" #Socket path
 genesisfile="/home/cardano-node/config/mainnet-shelley-genesis.json" #Shelley-Genesis path
 genesisfile_byron="/home/cardano-node/config/mainnet-byron-genesis.json" #Byron-Genesis path
 
-cardanocli=$(command -v cardano-cli) #Path to your cardano-cli you wanna use
 cardanonode=$(command -v cardano-node) #Path to your cardano-node you wanna use
+cardanocli=$(command -v cardano-cli) #Path to your cardano-cli you wanna use
 cardanohwcli=$(command -v cardano-hw-cli) #Path to your cardano-hw-cli you wanna use
-cardanometa=$(command  -v cardano-metadata-submitter) #Path to your cardano-metadata-submitter binary you wanna use. If present in the Path just set it to "cardano-metadata-submitter" without the "./"
-itn_jcli=$(command -v jcli) #only needed if you wanna include your itn witness for your pool-ticker
+cardanometa="./token-metadata-creator" #Path to your token-metadata-creator binary you wanna use. If present in the Path just set it to "token-metadata-creator" without the "./" infront
+jcli_bin=$(command -v jcli) #only needed if you wanna include your itn witness for your pool-ticker
 bech32_bin="./bech32"		#Path to your bech32 binary you wanna use. If your binary is present in the Path just set it to "bech32" without the "./"
+vitkedqr_bin="./vit-kedqr"	#Path to your vit-kedqr binary you wanna use. If your binary is present in the Path just set it to "vit-kedqr" without the "./" infront
 
 magicparam="--mainnet"	#choose "--mainnet" for mainnet or for example "--testnet-magic 1097911063" for a testnet, 12 for allegra
 addrformat="--mainnet"  #choose "--mainnet" for mainnet address format or like "--testnet-magic 1097911063" for testnet address format, 12 for allegra
@@ -27,7 +34,7 @@ offlineFile="./offlineTransfer.json" #path to the filename (JSON) that will be u
 #--------- leave this next value until you have to change it for a testnet
 byronToShelleyEpochs=208 #208 for the mainnet, 74 for the testnet, 1 for allegra-testnet
 
-#--------- only for kes/opcert update and upload via scp -----
+#--------- Only needed for automated kes/opcert update and upload via scp -----
 remoteServerAddr="remoteserver address or ip"                   #RemoteServer ip or dns name
 remoteServerUser="remoteuser"                                   #RemoteServer userlogin via ssh keys
 remoteServerSSHport="22"                                        #RemoteServer SSH port number
