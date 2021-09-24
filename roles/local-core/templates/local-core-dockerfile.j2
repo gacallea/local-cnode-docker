@@ -7,9 +7,9 @@ FROM ubuntu:20.04 AS cardano-node
 ENV DEBIAN_FRONTEND=noninteractive
 RUN ln -snf /usr/share/zoneinfo/$TIMEZONE /etc/localtime && \
     echo $TIMEZONE > /etc/timezone && \
-    # Install some useful software (to be decided...)
+    dpkg --add-architecture i386 && \
     apt-get update -y && \
-    apt-get install -y bc chrony curl jq iputils-ping tree apt-utils git rsync vim xxd
+    apt-get install -y bc chrony curl jq iputils-ping tree apt-utils git rsync vim xxd libudev-dev libusb-1.0-0-dev
 
 # Copy some customized config files
 COPY etc/inputrc /etc/inputrc
