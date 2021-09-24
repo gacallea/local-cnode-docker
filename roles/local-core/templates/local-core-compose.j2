@@ -24,6 +24,9 @@ services:
     volumes:
       - core_db:{{ cardano_node_user_home }}/db
       - core_data:{{ cardano_node_user_home }}/data
+    {# devices:
+      - "/dev/ttyUSB0:/dev/ttyUSB0" #}
+
 
 volumes:
   core_db: {}
