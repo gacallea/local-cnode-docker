@@ -13,7 +13,7 @@
       mode: "0644"
 
 - name: Fetch the latest Cardano binaries and configurations
-  script: scripts/get_files.sh {{ files_path }}/ {{ cardano_node_version }}
+  script: scripts/get_files.sh {{ files_path }}/ {{ cardano_hydra_build }} {{ cardano_node_version }}
   register: result
 
 - name: Fetch Script Output

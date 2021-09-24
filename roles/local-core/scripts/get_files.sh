@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-FETCH_URL="https://hydra.iohk.io/job/Cardano/cardano-node/cardano-node-linux/latest-finished"
-
 DOWNLOAD_DIR="$1"
-VERSION="$2"
+BUILD="$2"
+VERSION="$3"
+CNODE_TAR="https://hydra.iohk.io/build/{$BUILD}/download/1/cardano-node-${VERSION}-linux.tar.gz"
 
 if ! command -v curl >/dev/null; then
     echo "cURL not found. please install curl!"
@@ -15,16 +15,11 @@ if ! command -v lynx >/dev/null; then
     exit 2
 fi
 
-bin_file=$(lynx -dump -listonly -nonumbers "$FETCH_URL" | grep "tar.gz")
-
-if [[ "$bin_file" =~ cardano-node-"${VERSION}"-linux.tar.gz ]]; then
-    if [[ ! -f "$DOWNLOAD_DIR"/cardano-node-"${VERSION}"-linux.tar.gz ]]; then
-        curl -sLJ "$bin_file" -o "$DOWNLOAD_DIR"/cardano-node-"${VERSION}"-linux.tar.gz
-        tar xzvf "$DOWNLOAD_DIR"/cardano-node-"${VERSION}"-linux.tar.gz -C "$DOWNLOAD_DIR/"
-    fi
+if [[ ! -f "$DOWNLOAD_DIR"/"$CNODE_TAR" ]]; then
+    curl -sLJ "$CNODE_TAR" -o "$DOWNLOAD_DIR"/"$CNODE_TAR"
+    tar xzvf "$DOWNLOAD_DIR"/"$CNODE_TAR" -C "$DOWNLOAD_DIR/"
 else
-    echo "check the download url"
-    exit 1
+    echo "you already have downloaded the latest cardano-node"
 fi
 
 exit 0
