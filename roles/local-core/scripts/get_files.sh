@@ -18,9 +18,10 @@ fi
 
 if [[ ! -f "$DOWNLOAD_DIR"/"$CNODE_TAR" ]]; then
     curl -sLJ "$FETCH_URL" -o "$DOWNLOAD_DIR"/"$CNODE_TAR"
-    tar xzvf "$DOWNLOAD_DIR"/"$CNODE_TAR" -C "$DOWNLOAD_DIR/"
+    tar xzvf "$DOWNLOAD_DIR"/"$CNODE_TAR" -C "$DOWNLOAD_DIR/" cardano-cli
+    tar xzvf "$DOWNLOAD_DIR"/"$CNODE_TAR" -C "$DOWNLOAD_DIR/" cardano-node
 else
-    echo "you already have downloaded the latest cardano-node"
+    echo "you already have downloaded the latest cardano binaries"
 fi
 
 exit 0

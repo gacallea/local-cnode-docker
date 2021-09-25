@@ -12,8 +12,16 @@
       dest: docker/local-core/docker-compose.yml
       mode: "0644"
 
-- name: Fetch the latest Cardano binaries and configurations
-  script: scripts/get_files.sh {{ files_path }}/ {{ cardano_hydra_build }} {{ cardano_node_version }}
+- name: Fetch the latest Cardano binaries
+  script: scripts/get_files.sh {{ files_path }}/bins/ {{ cardano_hydra_build }} {{ cardano_node_version }}
+  register: result
+
+- name: Fetch Script Output
+  debug:
+    msg: "{{ result.stdout_lines }}"
+
+- name: Fetch the latest Cardano configurations
+  script: scripts/get_configs.sh {{ files_path }}/configs/
   register: result
 
 - name: Fetch Script Output
@@ -47,7 +55,7 @@
 
 - name: Copying Default Config Files and Topology
   copy:
-    src: "{{ files_path }}/configuration/cardano/{{ item }}"
+    src: "{{ files_path }}/configs/{{ item }}"
     dest: "docker/local-core/config/{{ item }}"
     mode: "0644"
   with_items:
