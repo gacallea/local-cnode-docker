@@ -46,7 +46,7 @@
 
 - name: Copying Cardano Binaries
   copy:
-    src: "{{ files_path }}/{{ item }}"
+    src: "{{ files_path }}/bins/{{ item }}"
     dest: "docker/local-core/bins/{{ item }}"
     mode: "0755"
   with_items:

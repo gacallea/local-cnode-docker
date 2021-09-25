@@ -16,6 +16,10 @@ if ! command -v lynx >/dev/null; then
     exit 2
 fi
 
+if [[ ! -d "${DOWNLOAD_DIR}/" ]]; then
+    mkdir -p "${DOWNLOAD_DIR}"
+fi
+
 if [[ ! -f "$DOWNLOAD_DIR"/"$CNODE_TAR" ]]; then
     curl -sLJ "$FETCH_URL" -o "$DOWNLOAD_DIR"/"$CNODE_TAR"
     tar xzvf "$DOWNLOAD_DIR"/"$CNODE_TAR" -C "$DOWNLOAD_DIR/" cardano-cli
