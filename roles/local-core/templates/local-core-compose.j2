@@ -3,6 +3,11 @@
 version: "3.8"
 
 services:
+  builder:
+    image: cardano-builder:{{ cardano_node_version }}
+    build:
+      context: .
+      target: cardano-builder
   core:
     image: cardano-node:{{ cardano_node_version }}
     build:
@@ -10,7 +15,7 @@ services:
       target: cardano-node
     environment:
       CARDANO_NODE_PORT: {{ core_nodes_port | string }}
-      TIMEZONE: UTC
+      TIMEZONE: {{ timezone }}
     healthcheck:
       test:
         [

@@ -1,5 +1,55 @@
 # {{ ansible_managed }}
 
+### CARDANO NODE BUILDER CONTAINER ###
+FROM ubuntu:20.04 AS cardano-builder
+
+# Change the Cardano Node version and git tag, and Cabal and GHC versions, here
+ENV CABAL_VERSION="{{ cabal_version | string }}" \
+    GHC_VERSION="{{ ghc_version | string }}" \
+    CARDANO_NODE_VERSION="{{ cardano_node_version | string }}" \
+    CARDANO_NODE_GIT_TAG="{{ cardano_node_git_tag | string }}" \
+    PATH="/opt/ghc/bin:/opt/cabal/bin:${PATH}" \
+    LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH" \
+    PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH"
+
+# Install the packages needed to compile cardano node software
+# GHC and Cabal from the official PPA - https://launchpad.net/~hvr/+archive/ubuntu/ghc
+RUN apt-get update -y && \
+    apt-get install -y software-properties-common && \
+    add-apt-repository ppa:hvr/ghc && \
+    apt-get update -y && \
+    apt-get install -y \
+    automake build-essential pkg-config libffi-dev libgmp-dev libssl-dev libtinfo-dev \
+    libsystemd-dev zlib1g-dev make g++ tmux git jq wget libncursesw5 libtool autoconf \
+    apt-utils cabal-install-${CABAL_VERSION} ghc-${GHC_VERSION} && \
+    cabal update
+
+# Clone + build libsodium
+WORKDIR /usr/local/src/
+RUN git clone https://github.com/input-output-hk/libsodium
+WORKDIR /usr/local/src/libsodium
+RUN git checkout 66f017f1 && \
+    ./autogen.sh && \
+    ./configure && \
+    make && \
+    make install
+
+# Clone + build cardano-node
+WORKDIR /usr/local/src/
+RUN git clone https://github.com/input-output-hk/cardano-node
+WORKDIR /usr/local/src/cardano-node/
+RUN git fetch --all --recurse-submodules --tags && \
+    git checkout tags/${CARDANO_NODE_GIT_TAG} && \
+    echo "package cardano-crypto-praos" >> cabal.project.local && \
+    echo "flags: -external-libsodium-vrf" >> cabal.project.local && \
+    cabal build all --minimize-conflict-set
+
+WORKDIR /usr/local/src/cardano-node/dist-newstyle/build/x86_64-linux/ghc-${GHC_VERSION}/
+RUN cp -f \
+    ./cardano-node-${CARDANO_NODE_VERSION}/x/cardano-node/build/cardano-node/cardano-node \
+    ./cardano-cli-${CARDANO_NODE_VERSION}/x/cardano-cli/build/cardano-cli/cardano-cli \
+    /usr/local/bin/
+
 ### CARDANO NODE IMAGE ###
 FROM ubuntu:20.04 AS cardano-node
 
@@ -13,13 +63,18 @@ RUN ln -snf /usr/share/zoneinfo/$TIMEZONE /etc/localtime && \
 
 # Copy some customized config files
 COPY etc/inputrc /etc/inputrc
+COPY etc/libsodium.conf /etc/ld.so.conf.d/libsodium.conf
+RUN ldconfig
+
+# Copy the compiled cardano node software from the builder to the node
+COPY --from=cardano-builder /usr/local/bin/ /usr/local/bin/
+# Copy the compiled cardano node software from the builder to the node
+COPY --from=cardano-builder /usr/local/lib/ /usr/local/lib/
 
 # Copy the entrypoint scripts
 COPY usr/local/lib/ /usr/local/lib/
 COPY usr/local/bin/ /usr/local/bin/
 
-# Copy downloaded binaries
-COPY bins/ /usr/local/bin/
 
 RUN curl -sLJ https://github.com/input-output-hk/jormungandr/releases/download/v{{ jormungandr_version }}/jormungandr-{{ jormungandr_version }}-x86_64-unknown-linux-gnu-generic.tar.gz -o /tmp/jormungandr-{{ jormungandr_version }}-x86_64-unknown-linux-gnu-generic.tar.gz
 RUN tar -xzf /tmp/jormungandr-{{ jormungandr_version }}-x86_64-unknown-linux-gnu-generic.tar.gz -C /usr/local/bin/
