@@ -2,18 +2,20 @@
 
 An Ansible Role to build a Docker image and spin a container to manage a Cardano stake pool operations locally.
 
-## Operating System ##
+## Specs ##
 
-The base system (Docker image) is [Ubuntu 20.04 LTS](https://ubuntu.com/blog/ubuntu-20-04-lts-arrives).
+### Operating System ###
 
-## Build Tools ##
+The base Docker image is [Ubuntu 20.04 LTS](https://ubuntu.com/blog/ubuntu-20-04-lts-arrives).
 
-Cabal Version: 3.4
-GHC Version: 8.10.4
+### Build Tools ###
 
-## System Tools ##
+- Cabal Version: 3.4
+- GHC Version: 8.10.4
 
-When building the image, the environment pulls the latest:
+### System Tools ###
+
+When building the image, the environment installs the following:
 
 - [Cardano Node + CLI](https://github.com/input-output-hk/cardano-node/)
 - [Cardano Configs](https://hydra.iohk.io/job/Cardano/cardano-node/cardano-deployment/latest-finished/download/1/index.html)
@@ -128,4 +130,4 @@ scripts
 socket
 ```
 
-Enjoy
+### Enjoy ###
