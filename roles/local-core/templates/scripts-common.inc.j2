@@ -12,9 +12,9 @@
 #
 ##############################################################################################################################
 
-socket="/home/cardano-node/socket/node.socket" #Socket path
-genesisfile="/home/cardano-node/config/mainnet-shelley-genesis.json" #Shelley-Genesis path
-genesisfile_byron="/home/cardano-node/config/mainnet-byron-genesis.json" #Byron-Genesis path
+socket="{{ cardano_node_user_home }}/socket/node.socket" #Socket path
+genesisfile="{{ cardano_node_user_home }}/config/mainnet-shelley-genesis.json" #Shelley-Genesis path
+genesisfile_byron="{{ cardano_node_user_home }}/config/mainnet-byron-genesis.json" #Byron-Genesis path
 
 cardanonode=$(command -v cardano-node) #Path to your cardano-node you wanna use
 cardanocli=$(command -v cardano-cli) #Path to your cardano-cli you wanna use

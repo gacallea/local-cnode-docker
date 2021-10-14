@@ -2,6 +2,8 @@
 
 An Ansible Role to build a Docker image and spin a container to manage a Cardano stake pool operations locally.
 
+To save CPU cycles and quite some time, this Role downloads the binaries for ```cardano-node, cardano-cli, cardano-hw-cli```. SPO Scripts are cloned from the latest repo.
+
 ## Specs ##
 
 ### Operating System ###
@@ -56,7 +58,7 @@ Once you have Python 3 installed, installing Ansible is a matter of running:
 python3 -m pip install ansible
 ```
 
-If you would like another approach, please read [the official documentation](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html).
+If you would like another approach, please refer to [the official Ansible documentation](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html).
 
 ### Install Docker Desktop ###
 
@@ -76,7 +78,7 @@ Within the Role ```vars``` directory, you can find a couple of variables you nee
 
 ```yaml
 ---
-# SET YOUR TIMEZONE HERE, DEFAULTS TO UTC
+# YOUR NODE TIMEZONE (LEAVE AS 'UTC' IF UNSURE)
 timezone: UTC
 
 # SET YOUR POOL TICKER AND ID HERE

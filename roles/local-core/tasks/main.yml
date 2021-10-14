@@ -12,6 +12,14 @@
       dest: docker/local-core/docker-compose.yml
       mode: "0644"
 
+- name: Fetch the latest Cardano binaries
+  script: scripts/get_bins.sh {{ files_path }}/bins/ {{ cardano_hydra_build }} {{ cardano_node_version }}
+  register: result
+
+- name: Fetch Script Output
+  debug:
+    msg: "{{ result.stdout_lines }}"
+
 - name: Fetch the latest Cardano configurations
   script: scripts/get_configs.sh {{ files_path }}/configs/
   register: result
@@ -29,15 +37,6 @@
     scripts-common.inc.j2:
       dest: "docker/local-core/config/.common.inc"
       mode: "0400"
-    setup-libsodium.conf.j2:
-      dest: "docker/local-core/etc/libsodium.conf"
-      mode: "0644"
-    setup-inputrc.j2:
-      dest: "docker/local-core/etc/inputrc"
-      mode: "0644"
-    setup-bashrc.j2:
-      dest: "docker/local-core/config/.bashrc"
-      mode: "0644"
 
 - name: Copying Default Config Files and Topology
   copy:
@@ -60,10 +59,6 @@
     build: yes
     state: present
   register: result
-
-- name: Docker Compose Compile Result
-  debug:
-    msg: "Docker container successfully built: {{ result.services.builder.local_builder_1.image }}"
 
 - name: Docker Compose Compile Result
   debug:
