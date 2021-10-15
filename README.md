@@ -69,7 +69,7 @@ If you would like another approach, please refer to [the official Ansible docume
 ### Clone This Repo ###
 
 ```shell
-git clone https://github.com/gacallea/local-core.git
+git clone https://github.com/gacallea/local-cnode-docker.git
 ```
 
 ### Adjust The Variables ###
@@ -98,7 +98,7 @@ The variable are pretty self-explanatory. However, I should explain the ```secre
 Once you have everything in place, it's time to let Ansible and Docker do their work.
 
 ```shell
-ansible-playbook local-core.yml
+ansible-playbook local-cnode-docker.yml
 ```
 
 ### Connect To The Container ###

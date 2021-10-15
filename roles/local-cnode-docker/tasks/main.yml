@@ -5,11 +5,11 @@
     dest: "{{ item.value.dest }}"
     mode: "{{ item.value.mode }}"
   with_dict:
-    local-core-dockerfile.j2:
-      dest: docker/local-core/Dockerfile
+    local-cnode-docker-dockerfile.j2:
+      dest: docker/local-cnode-docker/Dockerfile
       mode: "0644"
-    local-core-compose.j2:
-      dest: docker/local-core/docker-compose.yml
+    local-cnode-docker-compose.j2:
+      dest: docker/local-cnode-docker/docker-compose.yml
       mode: "0644"
 
 - name: Fetch the latest Cardano binaries
@@ -35,13 +35,13 @@
     mode: "{{ item.value.mode }}"
   with_dict:
     scripts-common.inc.j2:
-      dest: "docker/local-core/config/.common.inc"
+      dest: "docker/local-cnode-docker/config/.common.inc"
       mode: "0400"
 
 - name: Copying Default Config Files and Topology
   copy:
     src: "{{ files_path }}/configs/{{ item }}"
-    dest: "docker/local-core/config/{{ item }}"
+    dest: "docker/local-cnode-docker/config/{{ item }}"
     mode: "0644"
   with_items:
     - mainnet-config.json
@@ -52,7 +52,7 @@
 
 - name: Docker Compose Build Local Core
   docker_compose:
-    project_src: docker/local-core/
+    project_src: docker/local-cnode-docker/
     project_name: local
     files:
       - "docker-compose.yml"

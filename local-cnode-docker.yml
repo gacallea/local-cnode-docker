@@ -1,0 +1,5 @@
+---
+- name: Create Local Cardano Node Docker Container
+  hosts: localhost
+  roles:
+    - local-cnode-docker
