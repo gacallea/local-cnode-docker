@@ -10,11 +10,6 @@ To save CPU cycles and quite some time, this Role downloads the binaries for ```
 
 The base Docker image is [Ubuntu 20.04 LTS](https://ubuntu.com/blog/ubuntu-20-04-lts-arrives).
 
-### Build Tools ###
-
-- Cabal Version: 3.4
-- GHC Version: 8.10.4
-
 ### System Tools ###
 
 When building the image, the environment installs the following:
